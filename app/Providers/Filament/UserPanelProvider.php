@@ -36,6 +36,7 @@ class UserPanelProvider extends PanelProvider
         return $panel
             ->id('user')
             ->path('user')
+            ->brandName('ERP PFS')
             ->plugin(
                 PanelShiftDropdown::make()
                     ->logoutItem()
