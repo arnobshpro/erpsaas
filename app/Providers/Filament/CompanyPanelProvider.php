@@ -68,8 +68,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Wallo\FilamentCompanies\Actions\GenerateRedirectForProvider;
-use Wallo\FilamentCompanies\Enums\Feature;
-use Wallo\FilamentCompanies\Enums\Provider;
 use Wallo\FilamentCompanies\FilamentCompanies;
 use Wallo\FilamentCompanies\Pages\Auth\Register;
 
@@ -99,8 +97,6 @@ class CompanyPanelProvider extends PanelProvider
                     ->switchCurrentCompany()
                     ->updateProfileInformation(component: UpdateProfileInformation::class)
                     ->updatePasswords(component: UpdatePassword::class)
-                    ->setPasswords()
-                    ->connectedAccounts()
                     ->manageBrowserSessions()
                     ->accountDeletion()
                     ->profilePhotos()
@@ -109,12 +105,7 @@ class CompanyPanelProvider extends PanelProvider
                     ->autoAcceptInvitations()
                     ->termsAndPrivacyPolicy()
                     ->notifications()
-                    ->modals()
-                    ->socialite(
-                        condition: ! $isDemoEnvironment,
-                        providers: [Provider::Github],
-                        features: [Feature::RememberSession, Feature::ProviderAvatars],
-                    ),
+                    ->modals(),
                 PanelShiftDropdown::make()
                     ->logoutItem()
                     ->companySettings()
