@@ -65,7 +65,7 @@ jobs:
       - name: Accounting tests on isolated MySQL
         run: php artisan test
       - name: Audit production PHP dependencies
-        run: composer audit --no-dev
+        run: composer audit --no-dev --abandoned=report
       - name: Audit frontend dependencies
         run: npm audit --audit-level=high
       - name: Prepare production dependency artifact

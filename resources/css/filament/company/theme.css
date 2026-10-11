@@ -1,4 +1,5 @@
-@import '/vendor/filament/filament/resources/css/theme.css';
+@import "tailwindcss" source(none);
+@import '/vendor/filament/filament/resources/css/base.css';
 @import '/vendor/awcodes/filament-table-repeater/resources/css/plugin.css';
 @import 'custom-data-table.css';
 @import 'custom-section.css';
@@ -8,7 +9,19 @@
 @import 'tooltip.css';
 @import 'top-navigation.css';
 
-@config 'tailwind.config.js';
+@config './tailwind.config.js';
+
+@source "../../../../app/Filament/Company/**/*.php";
+@source "../../../../resources/views/filament/**/*.blade.php";
+@source "../../../../resources/views/livewire/company/**/*.blade.php";
+@source "../../../../resources/views/components/**/*.blade.php";
+@source "../../../../resources/views/vendor/**/*.blade.php";
+@source "../../../../vendor/filament/**/*.blade.php";
+@source "../../../../vendor/andrewdwallo/filament-companies/resources/views/**/*.blade.php";
+@source "../../../../vendor/andrewdwallo/filament-selectify/resources/views/**/*.blade.php";
+@source "../../../../vendor/awcodes/filament-table-repeater/resources/**/*.blade.php";
+@source "../../../../vendor/jaocero/radio-deck/resources/views/**/*.blade.php";
+@source "../../../../vendor/codewithdennis/filament-simple-alert/resources/**/*.blade.php";
 
 .es-file-upload.document-logo > div {
     @apply w-48;
@@ -72,11 +85,11 @@
     }
 
     .fi-ta-summary-row-heading {
-        @apply px-3 py-3 !important;
+        @apply px-3! py-3!;
     }
 
     .fi-ta-text-summary {
-        @apply px-3 py-3 !important;
+        @apply px-3! py-3!;
 
         > span {
             @apply font-medium text-gray-950 dark:text-white;
@@ -84,21 +97,21 @@
     }
 
     .fi-ta-text {
-        @apply px-3 py-0 !important;
+        @apply px-3! py-0!;
     }
 
     .fi-ta-text-input {
-        @apply px-0 py-0 !important;
+        @apply px-0! py-0!;
     }
 
     .fi-ta-icon {
-        @apply px-3 py-0 !important;
+        @apply px-3! py-0!;
     }
 
     .fi-ta-text-input {
         .fi-input-wrp,
         .fi-input {
-            @apply ring-0 bg-transparent shadow-none rounded-none !important;
+            @apply ring-0! bg-transparent! shadow-none! rounded-none!;
         }
     }
 
