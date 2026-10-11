@@ -1,0 +1,81 @@
+name: ERP build and accounting tests
+on:
+  push:
+    branches: [3.x, hostinger-setup]
+  pull_request:
+    branches: [3.x]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only-password
+          MYSQL_DATABASE: erpsaas_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-only-password"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      APP_ENV: testing
+      APP_DEBUG: 'false'
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: erpsaas_test
+      DB_USERNAME: root
+      DB_PASSWORD: ci-only-password
+      MAIL_MAILER: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      CACHE_STORE: array
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, intl, pdo_mysql, mbstring, dom, curl, fileinfo, xml, zip
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Validate Composer manifest
+        run: composer validate --no-check-publish
+      - name: Install locked dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Configure isolated test application
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+      - name: Build frontend assets
+        run: |
+          npm ci
+          npm run build
+      - name: PHP syntax
+        run: find app bootstrap config database routes tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Accounting tests on isolated MySQL
+        run: php artisan test
+      - name: Audit production PHP dependencies
+        run: composer audit --no-dev
+      - name: Audit frontend dependencies
+        run: npm audit --audit-level=high
+      - name: Prepare production dependency artifact
+        run: |
+          composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+          php artisan filament:assets
+          test -s public/build/manifest.json
+          tar -czf erp-build.tgz app bootstrap config database public resources routes storage artisan composer.json composer.lock vendor
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erp-build
+          path: erp-build.tgz
+          retention-days: 7
